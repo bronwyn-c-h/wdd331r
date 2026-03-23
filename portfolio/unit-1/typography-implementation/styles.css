@@ -1,0 +1,625 @@
+/* ============================================================
+   FONT LOADING
+   ============================================================ */
+
+/*
+  Inter — variable font for body text and UI.
+  Loaded directly from Google Fonts' static CDN with font-display: swap
+  so body text falls back to system-ui instantly while Inter loads.
+  font-weight: 100 900 tells the browser this single file covers the
+  entire weight axis, so we never need separate weight files.
+*/
+@font-face {
+    font-family: 'Inter';
+    src: url('https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/*
+  Playfair Display — serif display font for headings.
+  A separate @font-face for the italic variant so we can use
+  it intentionally in blockquotes and pull-quotes.
+*/
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.woff2') format('woff2');
+    font-weight: 400 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    src: url('https://fonts.gstatic.com/s/playfairdisplay/v37/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKd3vUDQ.woff2') format('woff2');
+    font-weight: 400 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+
+/* ============================================================
+   CUSTOM PROPERTIES
+   ============================================================ */
+
+:root {
+    /* Font stacks — custom font first, then system fallbacks */
+    --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-mono:    ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+    --font-size-base: 1rem;
+    --scale-ratio:    1.333;
+
+    /* step -1 : 0.75rem → 0.875rem  (captions, small text) */
+    --step--1: clamp(0.75rem, 0.71rem + 0.36vw, 0.875rem);
+
+    /* step 0  : 1rem → 1.125rem     (body text) */
+    --step-0:  clamp(1rem, 0.95rem + 0.45vw, 1.125rem);
+
+    /* step 1  : 1.125rem → 1.5rem   (.lead, h4) */
+    --step-1:  clamp(1.125rem, 0.99rem + 1.16vw, 1.5rem);
+
+    /* step 2  : 1.25rem → 1.875rem  (h3) */
+    --step-2:  clamp(1.25rem, 1.04rem + 1.88vw, 1.875rem);
+
+    /* step 3  : 1.5rem → 2.5rem     (h2) */
+    --step-3:  clamp(1.5rem, 1.14rem + 3.21vw, 2.5rem);
+
+    /* step 4  : 1.875rem → 3.5rem   (h1) */
+    --step-4:  clamp(1.875rem, 1.27rem + 5.13vw, 3.5rem);
+
+    /* ─── Baseline rhythm ────────────────────────────────────────
+       --rhythm is the single source of truth for all vertical
+       spacing. It equals the line-height of body text in rems:
+         1rem (font-size) × 1.5 (line-height) = 1.5rem
+
+       Every space and line-height in the system is a multiple
+       of this unit so the page stays on an invisible grid.
+    ─────────────────────────────────────────────────────────── */
+    /* Fluid rhythm: shrinks from 1.5rem at 1440px down to 1.25rem at 320px */
+    --rhythm: clamp(1.25rem, 1.14rem + 0.89vw, 1.5rem);   /* = 1rem base × 1.5 line-height */
+
+    /* Line heights derived from rhythm
+       body      = 1 × rhythm  (comfortable for long text)
+       tight     = 0.8 × rhythm (headings — large text needs less)
+       loose     = 1.333 × rhythm (captions / small text breathes more) */
+    --line-height-body:    calc(var(--rhythm) / var(--font-size-base));   /* 1.5  */
+    --line-height-heading: calc(var(--rhythm) * 0.8 / var(--font-size-base)); /* 1.2 */
+    --line-height-loose:   calc(var(--rhythm) * 1.333 / var(--font-size-base)); /* ~2 */
+
+    /* Spacing scale — all multiples of --rhythm
+       xs  = 0.5  × rhythm = 0.75rem
+       sm  = 1    × rhythm = 1.5rem
+       md  = 1.5  × rhythm = 2.25rem  (default paragraph gap)
+       lg  = 2    × rhythm = 3rem
+       xl  = 3    × rhythm = 4.5rem   (section breaks)      */
+    --space-xs:  calc(var(--rhythm) * 0.5);
+    --space-sm:  calc(var(--rhythm) * 1);
+    --space-md:  calc(var(--rhythm) * 1.5);
+    --space-lg:  calc(var(--rhythm) * 2);
+    --space-xl:  calc(var(--rhythm) * 3);
+
+    /* Colors */
+    --color-text:       #1a1a2e;
+    --color-text-muted: #5a5a7a;
+    --color-bg:         #fafaf8;
+    --color-surface:    #ffffff;
+    --color-border:     #e2e2e8;
+    --color-accent:     #3d5af1;
+
+    /* Measure — ch units keep line length tied to the actual font */
+    --measure:          66ch;   /* ideal body text: ~66 chars */
+    --measure-heading:  30ch;   /* headings read better shorter */
+    --measure-lead:     54ch;   /* lead paragraph slightly wider than headings */
+    --measure-small:    60ch;   /* captions / small text */
+
+    /* ─── Font weights ───────────────────────────────────────────
+       Named weights make intent explicit and avoid magic numbers.
+       Inter is a variable font so any value 100–900 is valid.
+    ─────────────────────────────────────────────────────────── */
+    --font-weight-regular:     400;
+    --font-weight-medium:      500;
+    --font-weight-semibold:    600;
+    --font-weight-bold:        700;
+    --font-weight-black:       900;
+
+    /* ─── Letter spacing ─────────────────────────────────────────
+       Relative em values so spacing scales with font size.
+       negative  : compress large display headings (optical tightening)
+       normal    : inherit / reset (0em)
+       wide      : small caps / labels — openness aids readability
+       wider     : sub-labels and eyebrow text
+    ─────────────────────────────────────────────────────────── */
+    --tracking-tight:   -0.02em;
+    --tracking-tight-sm: -0.01em;
+    --tracking-normal:   0em;
+    --tracking-wide:     0.03em;
+    --tracking-wider:    0.04em;
+
+    /* ─── Border radius ──────────────────────────────────────────
+       A single geometric vocabulary keeps shapes consistent.
+    ─────────────────────────────────────────────────────────── */
+    --radius-sm:   0.25rem;
+    --radius-md:   0.5rem;
+    --radius-lg:   0.75rem;
+    --radius-pill: 9999px;
+
+    /* ─── Border widths ──────────────────────────────────────────
+       Token-driven borders; change one value to reskin all edges.
+    ─────────────────────────────────────────────────────────── */
+    --border-thin:   1px;
+    --border-accent: 4px;   /* blockquote / callout accent stripe */
+
+    /* ─── Link colors ────────────────────────────────────────────
+       Separate from --color-accent so nav and body links can
+       diverge later without touching the global accent token.
+    ─────────────────────────────────────────────────────────── */
+    --color-link:          #3d5af1;   /* same hue as accent */
+    --color-link-hover:    #2541d4;   /* ~15% darker */
+    --color-link-visited:  #6b48c8;   /* shifted purple — visited state */
+
+    /* ─── Callout / aside surface ────────────────────────────────
+       Subtle tint that sits visually behind body content.
+    ─────────────────────────────────────────────────────────── */
+    --color-callout-bg:    #eef0fd;   /* very light accent tint */
+    --color-aside-bg:      #f4f4f8;   /* neutral surface for aside */
+}
+
+
+/* ============================================================
+   BASE RESET + FOUNDATION
+   ============================================================ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    /* Optical font sizing where supported */
+    font-optical-sizing: auto;
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: var(--line-height-body);
+    color: var(--color-text);
+    background: var(--color-bg);
+    /* Improve text rendering on macOS/iOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* ============================================================
+   TYPOGRAPHY SCALE
+   ============================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-heading);
+    color: var(--color-text);
+    /* Optically tighten large display type — positive tracking
+       looks too open at heading sizes */
+    letter-spacing: var(--tracking-tight);
+    /* Headings break awkwardly at long measures — keep them short */
+    max-width: var(--measure-heading);
+}
+
+h1 { font-size: var(--step-4); }
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); }
+h4 { font-size: var(--step-1); }
+
+p, li, blockquote {
+    font-size: var(--step-0);
+    /* 66ch is the sweet spot — keeps lines between 45–75 chars */
+    max-width: var(--measure);
+}
+
+.lead {
+    font-size: var(--step-1);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-muted);
+    /* lead inherits --line-height-body naturally; explicit here
+       for clarity and so future overrides have a clear target */
+    line-height: var(--line-height-body);
+    /* Lead is larger so 54ch still lands in the readable range */
+    max-width: var(--measure-lead);
+}
+
+.small {
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+    max-width: var(--measure-small);
+    /* Small text at a looser line-height stays readable */
+    line-height: var(--line-height-loose);
+}
+
+
+/* ============================================================
+   VERTICAL RHYTHM — all spacing is a multiple of --rhythm (1.5rem)
+   ============================================================ */
+
+/* h1: 1 rhythm below  (1.5rem) */
+h1 { margin-block-end: var(--space-sm); }
+/* h2: 3 rhythms above (4.5rem), 0.5 rhythm below (0.75rem) */
+h2 { margin-block-start: var(--space-xl); margin-block-end: var(--space-xs); }
+/* h3: 2 rhythms above (3rem), 0.5 rhythm below */
+h3 { margin-block-start: var(--space-lg); margin-block-end: var(--space-xs); }
+/* h4: 1.5 rhythms above (2.25rem), 0.5 rhythm below */
+h4 { margin-block-start: var(--space-md); margin-block-end: var(--space-xs); }
+
+p + p,
+p + ul,
+p + ol {
+    margin-block-start: var(--space-md);
+}
+
+ul, ol {
+    padding-inline-start: var(--space-md);
+}
+
+li + li {
+    margin-block-start: var(--space-xs);
+}
+
+
+/* ============================================================
+   BLOCKQUOTE
+   ============================================================ */
+
+blockquote {
+    /* Accent stripe on the left — --border-accent is the heavier weight */
+    border-inline-start: var(--border-accent) solid var(--color-accent);
+    padding-inline-start: var(--space-md);
+    margin-block: var(--space-lg);
+    font-style: italic;
+    font-family: var(--font-heading);
+    font-size: var(--step-1);
+    color: var(--color-text-muted);
+}
+
+blockquote cite {
+    display: block;
+    margin-block-start: var(--space-sm);
+    font-size: var(--step--1);
+    font-style: normal;
+    font-family: var(--font-body);
+    /* semibold weight for the attribution label */
+    font-weight: var(--font-weight-semibold);
+    /* wider tracking is conventional for small-caps / label text */
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-text);
+}
+
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.card {
+    background: var(--color-surface);
+    border: var(--border-thin) solid var(--color-border);
+    /* --radius-lg matches the design token rather than a raw rem value */
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-block: var(--space-xl);
+}
+
+.card h3 {
+    margin-block-start: 0;
+}
+
+
+/* ============================================================
+   PAGE LAYOUT
+   ============================================================ */
+
+header {
+    border-block-end: var(--border-thin) solid var(--color-border);
+    padding: var(--space-md) var(--space-lg);
+}
+
+nav {
+    display: flex;
+    gap: var(--space-md);
+    font-size: var(--step--1);
+    /* semibold weight for wayfinding labels */
+    font-weight: var(--font-weight-semibold);
+    /* wide tracking is conventional for compact nav labels */
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--color-text-muted);
+    transition: color 180ms ease;
+}
+
+nav a:hover {
+    color: var(--color-accent);
+}
+
+main {
+    max-width: calc(var(--measure) + var(--space-xl) * 2);
+    margin-inline: auto;
+    padding: var(--space-xl) var(--space-lg);
+}
+
+
+/* ============================================================
+   ARTICLE + ASIDE LAYOUT
+   Two-column grid: article takes the wider primary column,
+   aside sits in the narrower secondary column.
+   A min() on the aside keeps it from growing too wide on
+   ultra-wide screens.
+   ============================================================ */
+
+main {
+    /* Override the single max-width above with a two-column grid */
+    display: grid;
+    /* article: flexible, aside: 22rem max so it stays readable */
+    grid-template-columns: 1fr min(22rem, 30%);
+    gap: var(--space-xl);
+    /* Keep the overall content width comfortable */
+    max-width: calc(var(--measure) * 1.6);
+    align-items: start;
+}
+
+article {
+    /* article fills its grid column; max-width constrains prose width */
+    min-width: 0;   /* prevent grid blowout when content is wide */
+}
+
+aside {
+    /* Visually separate the aside with a subtle background */
+    background: var(--color-aside-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    /* Stick to the top of the viewport while scrolling */
+    position: sticky;
+    top: var(--space-lg);
+}
+
+aside h2 {
+    /* Smaller heading size in the aside — it's secondary content */
+    font-size: var(--step-1);
+    margin-block-start: 0;
+    margin-block-end: var(--space-sm);
+}
+
+aside ul {
+    /* Remove default list chrome — nav-style link list */
+    list-style: none;
+    padding-inline-start: 0;
+}
+
+aside li + li {
+    /* Slightly tighter rhythm than body list items */
+    margin-block-start: var(--space-xs);
+}
+
+aside a {
+    /* Aside links are plain until hovered — less visual noise */
+    font-size: var(--step--1);
+    font-weight: var(--font-weight-medium);
+}
+
+
+/* ============================================================
+   INLINE LINKS
+   Body-copy links use the --color-link token so all link
+   colors update from one place. The underline offset lifts
+   the line off the descenders for legibility.
+   ============================================================ */
+
+/* Links nested inside article prose or the aside */
+article a,
+aside a {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklch, var(--color-link) 40%, transparent);
+    text-underline-offset: 0.2em;
+    transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+article a:hover,
+aside a:hover {
+    color: var(--color-link-hover);
+    text-decoration-color: var(--color-link-hover);
+}
+
+article a:visited,
+aside a:visited {
+    color: var(--color-link-visited);
+}
+
+/* Focus ring — keyboard-accessible, uses accent color */
+article a:focus-visible,
+aside a:focus-visible,
+nav a:focus-visible {
+    outline: var(--border-accent) solid var(--color-link);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+
+/* ============================================================
+   INLINE TEXT ELEMENTS
+   strong, em, and code all carry typographic intent.
+   Named tokens make the intent explicit.
+   ============================================================ */
+
+strong, b {
+    font-weight: var(--font-weight-bold);
+    /* Preserve the current color — don't change visual weight
+       by shifting color as well */
+    color: inherit;
+}
+
+em, i {
+    /* Playfair Display has a beautiful italic — inherit it where
+       the element is inside a heading, or fall back to Inter's
+       oblique for body copy */
+    font-style: italic;
+    color: inherit;
+}
+
+code, kbd, samp {
+    font-family: var(--font-mono);
+    font-size: 0.875em;   /* em unit so it scales relative to context */
+    font-weight: var(--font-weight-medium);
+    /* Subtle inline code pill */
+    background: var(--color-callout-bg);
+    color: var(--color-text);
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    border: var(--border-thin) solid var(--color-border);
+    /* Prevent very long tokens from breaking layout */
+    word-break: break-word;
+}
+
+
+/* ============================================================
+   CALLOUT  (.callout)
+   Used in the aside for the "Quick Tip" block.
+   Inherits aside background but adds an accent stripe to
+   signal that this content is highlighted / notable.
+   ============================================================ */
+
+.callout {
+    /* Accent-tinted background distinguishes the callout from
+       the surrounding aside surface */
+    background: var(--color-callout-bg);
+    border-inline-start: var(--border-accent) solid var(--color-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-block-start: var(--space-lg);
+}
+
+.callout h3 {
+    font-size: var(--step-0);
+    /* Tight tracking on this small heading keeps it from looking
+       too spread-out at the reduced size */
+    letter-spacing: var(--tracking-tight-sm);
+    margin-block-start: 0;
+    margin-block-end: var(--space-xs);
+    color: var(--color-accent);
+}
+
+.callout p {
+    font-size: var(--step--1);
+    /* Callout prose is short — looser line-height aids scannability */
+    line-height: var(--line-height-loose);
+    color: var(--color-text-muted);
+    /* Override the global measure cap; callout is already narrow */
+    max-width: 100%;
+    margin-block-start: 0;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+footer {
+    border-block-start: var(--border-thin) solid var(--color-border);
+    padding: var(--space-md) var(--space-lg);
+    /* Footer text is de-emphasized — smaller and muted */
+    font-size: var(--step--1);
+    color: var(--color-text-muted);
+    /* Center the copyright line */
+    text-align: center;
+    /* Wider tracking on short label-like text aids legibility */
+    letter-spacing: var(--tracking-wide);
+}
+
+footer p {
+    /* Remove the global measure cap — footer content is always short */
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   RESPONSIVE ADJUSTMENTS
+   Tighten layout padding and heading line-height at narrow
+   viewports. The type scale itself is already fully fluid
+   (every step uses clamp() above), and --rhythm is fluid
+   so all spacing tokens automatically shrink on mobile.
+   These breakpoints handle the remaining edge cases.
+   ========================================================= */
+
+/* ── 768 px and below ──────────────────────────────────── */
+@media (max-width: 768px) {
+
+    /* Collapse the two-column article/aside grid to a single
+       column — aside stacks below the article on mobile */
+    main {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    /* Aside no longer needs to be sticky in single-column flow */
+    aside {
+        position: static;
+    }
+
+    /* Reduce main padding so content isn't walled in on
+       tablets and large phones */
+    main {
+        padding: var(--space-lg) var(--space-md);
+    }
+
+    /* Tighter heading line-height at mid-size — large
+       headings look better condensed when they wrap */
+    h1, h2 {
+        line-height: calc(var(--line-height-heading) * 0.95);
+    }
+
+    /* Wider lead / body measure; there's less horizontal
+       space so the 66ch cap can feel unnecessarily narrow */
+    p, li, blockquote {
+        max-width: 100%;
+    }
+}
+
+/* ── 480 px and below ──────────────────────────────────── */
+@media (max-width: 480px) {
+
+    /* Minimal padding on small phones */
+    main {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    header {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    /* Very tight heading tracking helps large clamp() values
+       fit comfortably on narrow screens */
+    h1 {
+        letter-spacing: var(--tracking-tight);
+    }
+
+    h2 {
+        letter-spacing: var(--tracking-tight-sm);
+    }
+
+    /* Headings can go full-width on small phones */
+    h1, h2, h3, h4 {
+        max-width: 100%;
+    }
+
+    /* Lead text also uncapped */
+    .lead {
+        max-width: 100%;
+    }
+}
