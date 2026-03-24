@@ -1,0 +1,453 @@
+/* 
+ * NEW CSS - Refactored Version
+ * 
+ * Techniques used:
+ * 1. CSS nesting  — flat selectors replaced with nested blocks
+ * 2. :is()        — repeated selector lists collapsed to one rule
+ * 3. :where()     — zero-specificity base/reset styles
+ * 4. :has()       — card layout conditioned on presence of <img>
+ * 5. :not()       — primary button variant without an extra class
+ */
+
+
+/* ============================================================
+   RESET + BASE
+   :where() gives these rules zero specificity so any component
+   style can override them without needing !important.
+   ============================================================ */
+
+:where(*, *::before, *::after) {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:where(body) {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+:where(a) {
+    text-decoration: none;
+    color: inherit;
+}
+
+:where(button) {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   SITE HEADER + NAVIGATION
+   ============================================================ */
+
+.site-header {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    #navigation {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        /* :is() merges hover + active — both change color to accent */
+        .nav-link {
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+
+            &:is(:hover, .active) {
+                color: #667eea;
+            }
+
+            &:focus {
+                outline: 2px solid #667eea;
+                outline-offset: 4px;
+            }
+        }
+    }
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 6rem 2rem;
+    text-align: center;
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+
+        .hero-title {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+    }
+}
+
+
+/* ============================================================
+   BUTTONS
+   Shared styles sit on .btn itself.
+   :not(.btn-secondary) targets the primary variant without
+   requiring an explicit .btn-primary class.
+   ============================================================ */
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus {
+        outline: 2px solid #667eea;
+        outline-offset: 2px;
+    }
+
+    /* Primary — any .btn that is NOT .btn-secondary */
+    &:not(.btn-secondary) {
+        background: white;
+        color: #667eea;
+
+        &:hover {
+            background: #f8f9fa;
+        }
+    }
+
+    /* Secondary variant */
+    &.btn-secondary {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+/* :is() merges the two title selectors — same font-size and alignment */
+:is(.section-title, .cta-title) {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+/* Each title then sets its own color and margin */
+.section-title {
+    margin-bottom: 3rem;
+    color: #333;
+}
+
+.cta-title {
+    margin-bottom: 1rem;
+    color: white;
+}
+
+
+/* ============================================================
+   FEATURES
+   .card:has(img) adds the image grid layout only when an
+   <img> is present — no extra class needed in the HTML.
+   ============================================================ */
+
+.features {
+    background: #f8f9fa;
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+
+            &:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            }
+
+            .card-content {
+                padding: 1.5rem;
+
+                .card-title {
+                    font-size: 1.5rem;
+                    margin-bottom: 0.5rem;
+                    color: #333;
+                }
+
+                .card-text {
+                    color: #666;
+                    margin-bottom: 1rem;
+                    line-height: 1.6;
+                }
+
+                .card-link {
+                    color: #667eea;
+                    font-weight: 600;
+                    display: inline-block;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Only the grid-template-rows layout is conditional on the image */
+.card:has(img) {
+    display: grid;
+    grid-template-rows: 200px 1fr;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+
+.testimonials {
+    background: white;
+
+    .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+
+        .testimonial {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #667eea;
+
+            .testimonial-text {
+                font-size: 1.125rem;
+                font-style: italic;
+                color: #555;
+                margin-bottom: 1.5rem;
+            }
+
+            .testimonial-author {
+                display: block;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.25rem;
+                font-style: normal;
+            }
+
+            .testimonial-role {
+                display: block;
+                color: #888;
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
+
+
+/* ============================================================
+   STATS
+   :is() collapses the two .highlight color overrides into one.
+   ============================================================ */
+
+.stats {
+    background: #667eea;
+    padding: 4rem 2rem;
+
+    .stats-grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+
+        .stat-item {
+            text-align: center;
+
+            .stat-number {
+                display: block;
+                font-size: 3rem;
+                font-weight: 700;
+                color: white;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-label {
+                display: block;
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 1.125rem;
+            }
+
+            /* :is() targets both children with one rule */
+            &.highlight :is(.stat-number, .stat-label) {
+                color: #ffd700;
+            }
+        }
+    }
+}
+
+
+/* ============================================================
+   CTA
+   ============================================================ */
+
+.cta {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    padding: 6rem 2rem;
+    text-align: center;
+
+    .cta-text {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+
+/* ============================================================
+   SITE FOOTER
+   ============================================================ */
+
+.site-footer {
+    background: #1a1a1a;
+    color: white;
+    padding: 3rem 2rem 1rem;
+
+    .container {
+        padding: 0 2rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+
+        .footer-section {
+            .footer-title {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+                color: white;
+            }
+
+            .footer-links {
+                list-style: none;
+
+                .footer-link-item {
+                    margin-bottom: 0.5rem;
+
+                    .footer-link {
+                        color: #999;
+                        transition: color 0.3s;
+
+                        &:hover {
+                            color: #667eea;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .footer-bottom {
+        border-top: 1px solid #333;
+        padding-top: 2rem;
+        text-align: center;
+
+        .copyright {
+            color: #666;
+        }
+    }
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   :is() merges the three heading selectors into one rule.
+   ============================================================ */
+
+@media (max-width: 768px) {
+    :is(.hero-title, .section-title, .cta-title) {
+        font-size: 2rem;
+    }
+
+    .site-header {
+        #navigation {
+            flex-direction: column;
+            gap: 1rem;
+
+            .nav-list {
+                gap: 1rem;
+            }
+        }
+    }
+}
