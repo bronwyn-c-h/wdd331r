@@ -1,0 +1,85 @@
+/**
+ * Card Component
+ * A responsive card that adapts to its container size using container queries.
+ * Uses @supports for progressive enhancement with fallbacks.
+ */
+
+/* ─── Base card styles ───────────────────────────────────────────────────────
+   These styles apply in ALL browsers, including those without container query
+   support. They form the fallback vertical (stacked) layout.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.card {
+    background-color: var(--bg-clr);
+    border: 1px solid var(--table-border-clr);
+    border-radius: var(--radius-med);
+    padding: var(--spacing-med);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.card-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: var(--font-size-med);
+    font-weight: 700;
+    color: var(--text-clr);
+}
+
+.card-description {
+    font-size: var(--font-size-med);
+    color: var(--text-clr);
+    line-height: var(--line-height-med);
+}
+
+/* ─── Fallback hover state ───────────────────────────────────────────────────
+   Static background color for browsers without color-mix() support.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.card:hover {
+    background-color: #f0f0f0;
+}
+
+/* ─── Progressive enhancement: color-mix() hover ────────────────────────────
+   Overrides the static fallback with a dynamic color derived from the current
+   background and link color tokens. Only applied when color-mix() is supported.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@supports (background: color-mix(in oklch, red, blue)) {
+    .card:hover {
+        background-color: color-mix(in oklch, var(--bg-clr) 95%, var(--link-clr) 5%);
+    }
+}
+
+/* ─── Progressive enhancement: container queries ────────────────────────────
+   The .card-container and @container rules are wrapped in @supports so that
+   browsers without container query support skip this block entirely and use
+   the base vertical layout above as their fallback.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@supports (container-type: inline-size) {
+    /* Establish the container — child elements can query this element's width */
+    .card-container {
+        container-type: inline-size;
+        container-name: card;
+    }
+
+    /* When the container is at least 400px wide, switch to horizontal layout */
+    @container card (min-width: 400px) {
+        .card {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .card-image {
+            width: 200px;
+            flex-shrink: 0; /* Prevent the image from shrinking below 200px */
+        }
+    }
+}
