@@ -20,9 +20,9 @@
  */
 .article-hero {
     /* Your code here */
-    display: flex;               /* column flex container for vertical layout */
+    display: flex;               
     flex-direction: column;
-    justify-content: center;     /* vertically center the title/subtitle block */
+    justify-content: center;     
     min-height: 400px;
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: white;
@@ -43,7 +43,7 @@
 
 .article-hero-meta {
     /* Your code here - how do you push this to the bottom? */
-    margin-top: auto;            /* pushes meta to bottom of the flex column */
+    margin-top: auto;            
     font-size: var(--font-size-small);
     opacity: 0.8;
 }
@@ -56,17 +56,17 @@
  */
 .article-body {
     /* Your code here */
-    display: flex;               /* side-by-side content + sidebar */
-    flex-wrap: wrap;             /* sidebar wraps below on narrow viewports */
+    display: flex;               
+    flex-wrap: wrap;             
     gap: var(--spacing-xl);
-    align-items: flex-start;     /* prevent sidebar from stretching full height */
+    align-items: flex-start;     
     padding: 0 var(--spacing-xl);
 }
 
 .article-content {
     /* Your code here */
-    flex: 2 1 500px;             /* takes up 2x the share of sidebar, min ~500px before wrapping */
-    min-width: 0;                /* prevents flex blowout on long words/code */
+    flex: 2 1 500px;             
+    min-width: 0;                
     padding-right: var(--spacing-xl);
 }
 
@@ -83,7 +83,7 @@
  */
 .pull-quote {
     /* Your code here */
-    align-self: stretch;         /* visually breaks out of normal text alignment */
+    align-self: stretch;         
     font-size: var(--font-size-large);
     font-style: italic;
     font-weight: var(--font-weight-medium);
@@ -99,7 +99,7 @@
  */
 .article-sidebar {
     /* Your code here */
-    flex: 1 1 300px;             /* grows/shrinks proportionally, wraps below content at narrow widths */
+    flex: 1 1 300px;             
     min-width: 0;
 }
 
@@ -123,7 +123,7 @@
  */
 .related-article {
     /* Your code here */
-    display: flex;               /* media object: thumbnail beside text */
+    display: flex;               
     gap: var(--spacing-med);
     align-items: flex-start;
     padding: var(--spacing-sm) 0;
@@ -136,7 +136,7 @@
 
 .related-article-thumbnail {
     /* Your code here - fixed width */
-    flex-shrink: 0;              /* thumbnail stays at its set dimensions */
+    flex-shrink: 0;              
     width: 80px;
     height: 60px;
     border-radius: var(--radius-sm);
@@ -146,8 +146,8 @@
 
 .related-article-content {
     /* Your code here - grows to fill space */
-    flex: 1 1 auto;              /* fills remaining space beside thumbnail */
-    min-width: 0;                /* prevents text overflow in flex child */
+    flex: 1 1 auto;              
+    min-width: 0;                
 }
 
 .related-article-title {
@@ -168,7 +168,7 @@
  */
 .article-author {
     /* Your code here */
-    display: flex;               /* media object: photo beside author text */
+    display: flex;               
     gap: var(--spacing-lg);
     align-items: flex-start;
     margin-top: var(--spacing-xxl);
@@ -179,7 +179,7 @@
 
 .author-photo {
     /* Your code here */
-    flex-shrink: 0;              /* photo stays at its set dimensions */
+    flex-shrink: 0;             
     width: 100px;
     height: 100px;
     border-radius: 50%;
@@ -189,7 +189,7 @@
 
 .author-info {
     /* Your code here */
-    flex: 1 1 auto;              /* fills remaining space beside photo */
+    flex: 1 1 auto;              
     min-width: 0;
 }
 
